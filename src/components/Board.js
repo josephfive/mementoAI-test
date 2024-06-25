@@ -1,7 +1,6 @@
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 function Board({ items, boardId }) {
-  console.log('boardId : ', boardId, items);
   return (
     <Droppable droppableId={boardId}>
       {(provided, snapshot) => (
@@ -11,11 +10,7 @@ function Board({ items, boardId }) {
           style={getListStyle(snapshot.isDraggingOver)}
         >
           {items.map((item, index) => (
-            <Draggable
-              key={boardId + item.id}
-              draggableId={boardId + item.id}
-              index={index}
-            >
+            <Draggable key={item.id} draggableId={item.id} index={index}>
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
@@ -26,7 +21,7 @@ function Board({ items, boardId }) {
                     provided.draggableProps.style,
                   )}
                 >
-                  {item.content}
+                  {`${item.content}`}
                 </div>
               )}
             </Draggable>
