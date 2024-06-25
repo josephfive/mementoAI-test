@@ -124,9 +124,11 @@ function App() {
     const destinationItem = destinationBoard.items[destination.index]?.content;
 
     if (
-      Number(draggingItem[draggingItem.length - 1]) % 2 === 0 &&
-      destinationItem &&
-      Number(destinationItem[destinationItem.length - 1]) % 2 === 0
+      (Number(draggingItem[draggingItem.length - 1]) % 2 === 0 &&
+        destinationItem &&
+        Number(destinationItem[destinationItem.length - 1]) % 2 === 0) ||
+      (source.droppableId === 'board-0' &&
+        destination.droppableId === 'board-2')
     ) {
       setDeniedMove(true);
       return;
