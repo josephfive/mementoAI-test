@@ -44,35 +44,44 @@ function App() {
   const onDragEnd = useCallback(
     (result) => {
       const { destination, source } = result;
+      const sourceBoard = boards.find(
+        (board) => board.id === source.droppableId,
+      );
+      const sourceItem = sourceBoard.items[source?.index]?.content;
+      const prevItem = sourceBoard.items[destination?.index]?.content;
+      const nextItem = sourceBoard.items[destination?.index + 1]?.content;
       if (
         !destination ||
         (source.droppableId === 'board-0' &&
           destination.droppableId === 'board-2')
       ) {
         alert('첫 번째 칼럼에서 세 번째 칼럼으로는 아이템 이동이 불가능합니다');
-
+        console.log('1-3이슈');
         return;
       }
-      const sourceBoard = boards.find(
-        (board) => board.id === source.droppableId,
-      );
-      const sourceItem = sourceBoard.items[source.index]?.content;
-
       const destinationBoard = boards.find(
         (board) => board.id === destination.droppableId,
       );
       const destinationItem =
         destinationBoard.items[destination.index]?.content;
-
+      console.log(prevItem, sourceItem, nextItem);
+      console.log(
+        prevItem[prevItem.length - 1] % 2,
+        sourceItem[sourceItem.length - 1] % 2,
+        nextItem[nextItem.length - 1] % 2,
+      );
+      // console.log(result);
+      // console.log(sourceItem, destinationItem);
       if (
-        Number(sourceItem[sourceItem.length - 1]) % 2 === 0 &&
-        destinationItem &&
-        Number(destinationItem[destinationItem.length - 1]) % 2 === 0
+        (sourceItem[sourceItem.length - 1] % 2 === 0 &&
+          ((prevItem[prevItem.length - 1] % 2 === 0) ||
+        nextItem[nextItem.length - 1] % 2 === 0))
+        // Number(sourceItem[sourceItem.length - 1]) % 2 === 0 &&
+        // Number(destinationItem[destinationItem.length - 1]) % 2 === 0
       ) {
         alert('짝수 아이템은 다른 짝수 아이템 앞으로 이동할 수 없습니다');
         return;
       }
-
       if (destination.droppableId === source.droppableId) {
         const board = boards.find((board) => board.id === source.droppableId);
         const newItems = reorder(board.items, source.index, destination.index);
@@ -83,7 +92,6 @@ function App() {
         );
         setBoards(newBoard);
       }
-
       if (destination.droppableId !== source.droppableId) {
         const newBoards = reorderDifBoard(
           boards,
@@ -92,7 +100,6 @@ function App() {
           source.index,
           destination.index,
         );
-
         setBoards(newBoards);
       }
     },
@@ -100,30 +107,32 @@ function App() {
   );
 
   const onDragUpdate = (update) => {
+    // console.log(update);
     const { source, destination } = update;
+    const sourceBoard = boards.find((board) => board.id === source.droppableId);
+    const sourceItem = sourceBoard.items[source?.index]?.content;
+    const prevItem = sourceBoard.items[destination?.index]?.content;
+    const nextItem = sourceBoard.items[destination?.index + 1]?.content;
     if (!destination) {
       return;
     }
-    const startBoard = boards.find((board) => board.id === source.droppableId);
-    const draggingItem = startBoard.items[source.index].content;
-    const destinationBoard = boards.find(
-      (board) => board.id === destination.droppableId,
-    );
-    const destinationItem = destinationBoard.items[destination.index]?.content;
-
     if (
-      (Number(draggingItem[draggingItem.length - 1]) % 2 === 0 &&
-        destinationItem &&
-        Number(destinationItem[destinationItem.length - 1]) % 2 === 0) ||
-      (source.droppableId === 'board-0' &&
-        destination.droppableId === 'board-2')
+      (sourceItem[sourceItem.length - 1] % 2 === 0 &&
+        ((prevItem[prevItem.length - 1] % 2 === 0) ||
+      nextItem[nextItem.length - 1] % 2 === 0))
+    ) {
+      // console.log(deniedMove);
+      setDeniedMove(true);
+    } else if (
+      source.droppableId === 'board-0' &&
+      destination.droppableId === 'board-2'
     ) {
       setDeniedMove(true);
-      return;
+
+      // console.log(deniedMove);
     } else {
       setDeniedMove(false);
     }
-    setDeniedMove(false);
   };
 
   return (
