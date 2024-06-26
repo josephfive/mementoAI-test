@@ -50,7 +50,8 @@ function App() {
         (source.droppableId === 'board-0' &&
           destination.droppableId === 'board-2')
       ) {
-        console.log('1-3이슈');
+        alert('첫 번째 칼럼에서 세 번째 칼럼으로는 아이템 이동이 불가능합니다');
+
         return;
       }
       const sourceBoard = boards.find(
@@ -69,11 +70,7 @@ function App() {
         destinationItem &&
         Number(destinationItem[destinationItem.length - 1]) % 2 === 0
       ) {
-        console.log(
-          sourceItem[sourceItem.length - 1],
-          destinationItem[destinationItem.length - 1],
-          '짝수 이슈',
-        );
+        alert('짝수 아이템은 다른 짝수 아이템 앞으로 이동할 수 없습니다');
         return;
       }
 
@@ -134,7 +131,12 @@ function App() {
     <div style={getWraperStyle}>
       <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
         {boards.map((board, index) => (
-          <Board board={board} deniedMove={deniedMove} setBoards={setBoards} />
+          <Board
+            key={board.id}
+            board={board}
+            deniedMove={deniedMove}
+            setBoards={setBoards}
+          />
         ))}
       </DragDropContext>
     </div>

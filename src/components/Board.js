@@ -15,6 +15,7 @@ function Board({ board, deniedMove, setBoards }) {
     e.preventDefault();
     const newItem = {
       id: `${board.id}-${new Date()}`,
+      new: true,
       content: itemText,
     };
     console.log(newItem, board.id);
@@ -25,12 +26,7 @@ function Board({ board, deniedMove, setBoards }) {
           : prevBoard,
       );
     });
-    // setBoards((prev) => {
-    //   return {
-    //     ...prev,
-    //     [board.id]: [...prev[board.id], newItem],
-    //   };
-    // });
+
     setItemText('');
   };
   return (
@@ -52,6 +48,7 @@ function Board({ board, deniedMove, setBoards }) {
                     snapshot.isDragging,
                     provided.draggableProps.style,
                     deniedMove,
+                    item.new,
                   )}
                 >
                   {item.content}
@@ -89,12 +86,18 @@ function Board({ board, deniedMove, setBoards }) {
   );
 }
 const GRID = 8;
-const getItemStyle = (isDragging, draggableStyle, deniedMove) => ({
+const getItemStyle = (isDragging, draggableStyle, deniedMove, newItem) => ({
   userSelect: 'none',
   padding: GRID * 2,
   width: 210,
   margin: `0 0 ${GRID}px 0`,
-  background: isDragging ? (deniedMove ? 'red' : 'lightgreen') : 'grey',
+  background: isDragging
+    ? deniedMove
+      ? 'red'
+      : 'lightgreen'
+    : newItem
+    ? 'salmon'
+    : 'grey',
   ...draggableStyle,
 });
 const getListStyle = (isDraggingOver) => ({
