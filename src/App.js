@@ -3,7 +3,6 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Board from './components/Board';
 
 function App() {
-  const [selectedItems, setSelectedItems] = useState([]);
   const [deniedMove, setDeniedMove] = useState(false);
 
   const getItems = (boardId, count) =>
@@ -17,17 +16,15 @@ function App() {
       id: `board-${k}`,
       items: getItems(`board-${k}`, 10),
     }));
-  const [boards, setBoards] = useState(getBoards(3));
+  const [boards, setBoards] = useState(getBoards(4));
 
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
-    // console.log(removed)
     return result;
   };
 
-  // console.log(boards)
   const reorderDifBoard = (
     boards,
     startBoardId,
@@ -67,7 +64,6 @@ function App() {
       const destinationItem =
         destinationBoard.items[destination.index]?.content;
 
-      console.log(sourceItem, destinationItem);
       if (
         Number(sourceItem[sourceItem.length - 1]) % 2 === 0 &&
         destinationItem &&
@@ -89,7 +85,6 @@ function App() {
             ? { ...board, items: newItems }
             : board,
         );
-        // console.log(newBoard);
         setBoards(newBoard);
       }
 
@@ -108,9 +103,6 @@ function App() {
     [boards],
   );
 
-  // const onDragStart = (start) => {
-  //   console.log(start);
-  // };
   const onDragUpdate = (update) => {
     const { source, destination } = update;
     if (!destination) {
@@ -135,65 +127,19 @@ function App() {
     } else {
       setDeniedMove(false);
     }
-    console.log(draggingItem, deniedMove);
-    // console.log(update, destination.index);
     setDeniedMove(false);
   };
+
   return (
     <div style={getWraperStyle}>
-      <DragDropContext
-        onDragEnd={onDragEnd}
-        // onDragStart={onDragStart}
-        onDragUpdate={onDragUpdate}
-      >
+      <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
         {boards.map((board, index) => (
-          <Droppable key={board.id} droppableId={board.id}>
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                style={getListStyle(snapshot.isDraggingOver)}
-              >
-                {board.items.map((item, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={getItemStyle(
-                          snapshot.isDragging,
-                          provided.draggableProps.style,
-                          deniedMove,
-                        )}
-                      >
-                        {item.content}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+          <Board board={board} deniedMove={deniedMove} setBoards={setBoards} />
         ))}
       </DragDropContext>
     </div>
   );
 }
-const GRID = 8;
-const getItemStyle = (isDragging, draggableStyle, deniedMove) => ({
-  userSelect: 'none',
-  padding: GRID * 2,
-  margin: `0 0 ${GRID}px 0`,
-  background: isDragging ? (deniedMove ? 'red' : 'lightgreen') : 'grey',
-  ...draggableStyle,
-});
-const getListStyle = (isDraggingOver) => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: GRID,
-  width: 250,
-});
 
 const getWraperStyle = {
   display: 'flex',
