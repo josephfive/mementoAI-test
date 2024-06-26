@@ -43,7 +43,6 @@ function App() {
 
   const onDragEnd = useCallback(
     (result) => {
-      console.log(result);
       const { destination, source } = result;
       if (
         !destination ||

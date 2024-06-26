@@ -18,7 +18,6 @@ function Board({ board, deniedMove, setBoards }) {
       new: true,
       content: itemText,
     };
-    console.log(newItem, board.id);
     setBoards((prev) => {
       return prev.map((prevBoard) =>
         prevBoard.id === board.id
